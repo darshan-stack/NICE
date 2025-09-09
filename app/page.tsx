@@ -5,19 +5,35 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquare, Heart, Sparkles, Gift, Star, ShoppingCart, History, Filter, Home, Search, ChevronRight } from "lucide-react"
+import { 
+  MessageSquare, 
+  Heart, 
+  Sparkles, 
+  Gift, 
+  Star, 
+  ShoppingCart, 
+  History, 
+  Filter, 
+  Home, 
+  Search, 
+  ChevronRight,
+  Zap,
+  TrendingUp,
+  Users,
+  Award,
+  Clock,
+  Target,
+  ArrowRight,
+  Play
+} from "lucide-react"
 import { ChatSidebar } from "@/components/chat-sidebar"
 import { WishlistIcon } from "@/components/wishlist-icon"
-import { DotPattern } from "@/components/magicui/dot-pattern"
-import { AnimatedGradientText } from "@/components/magicui/animated-gradient-text"
-import { Highlighter } from "@/components/magicui/highlighter"
 import { AI_Prompt } from "@/components/ui/animated-ai-input"
-import { NavBar } from "@/components/ui/tubelight-navbar"
 import { Marquee } from "@/components/ui/marquee"
 import { ecommerceBrands } from "@/components/ui/gift-logos"
 import { AvatarCircles } from "@/components/ui/avatar-circles"
-import { StackedCircularFooter } from "@/components/ui/stacked-circular-footer"
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
 
 interface Product {
   id: string
@@ -54,8 +70,9 @@ export default function HomePage() {
   const [errorType, setErrorType] = useState<string | null>(null)
   const [isChatSidebarOpen, setIsChatSidebarOpen] = useState(false)
   const [currentConversation, setCurrentConversation] = useState<ChatHistory | null>(null)
+  const [activeSection, setActiveSection] = useState<string>("home")
 
-  // Avatar URLs for gift recommendation users - using diverse placeholder avatars
+  // Avatar URLs for gift recommendation users
   const avatarUrls = [
     "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
     "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
@@ -75,6 +92,7 @@ export default function HomePage() {
     if (itemName === 'History') {
       setIsChatSidebarOpen(!isChatSidebarOpen)
     }
+    setActiveSection(itemName.toLowerCase())
   }
 
   const handleSubmit = async (promptText: string) => {
@@ -97,7 +115,6 @@ export default function HomePage() {
 
       if (data.success) {
         setRecommendations(data.data.recommendations)
-        // Save to chat history
         saveToChatHistory(promptText, data.data.recipient_profile, data.data.occasion_info)
       } else {
         setErrorType(data.error || "UNKNOWN_ERROR")
@@ -124,7 +141,7 @@ export default function HomePage() {
       occasion_info
     }
     
-    history = [newHistory, ...history.slice(0, 49)] // Keep last 50 conversations
+    history = [newHistory, ...history.slice(0, 49)]
     localStorage.setItem("gift-chat-history", JSON.stringify(history))
   }
 
@@ -134,54 +151,68 @@ export default function HomePage() {
     setIsChatSidebarOpen(false)
   }
 
-  return (
-    <div className="min-h-screen w-full bg-white relative overflow-hidden">
-      {/* Sunny Glow Background */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at center, #fde047, transparent)
-          `,
-        }}
-      />
-      
-      {/* Dot Pattern Layer */}
-      <DotPattern
-        className={cn(
-          "absolute inset-0 z-[1] pointer-events-none",
-          "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
-        )}
-      />
-      
-      {/* Tubelight Navbar */}
-      <NavBar items={navItems} onItemClick={handleNavClick} />
+  const stats = [
+    { icon: Users, label: "Happy Customers", value: "50K+" },
+    { icon: Gift, label: "Gifts Recommended", value: "1M+" },
+    { icon: Star, label: "Average Rating", value: "4.9/5" },
+    { icon: Zap, label: "Response Time", value: "<3s" }
+  ]
 
-      {/* Animated Gradient Text Banner */}
-      <div className="flex justify-center pt-20 pb-8 relative z-10">
-        <div className="group relative mx-auto flex items-center justify-center rounded-full px-4 py-1.5 shadow-[inset_0_-8px_10px_#8fdfff1f] transition-shadow duration-500 ease-out hover:shadow-[inset_0_-5px_10px_#8fdfff3f]">
-          <span
-            className={cn(
-              "absolute inset-0 block h-full w-full animate-gradient rounded-[inherit] bg-gradient-to-r from-[#ffaa40]/50 via-[#9c40ff]/50 to-[#ffaa40]/50 bg-[length:300%_100%] p-[1px]",
-            )}
-            style={{
-              WebkitMask:
-                "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "destination-out",
-              mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              maskComposite: "subtract",
-              WebkitClipPath: "padding-box",
-            }}
-          />
-          🎁 <hr className="mx-2 h-4 w-px shrink-0 bg-neutral-500" />
-          <AnimatedGradientText className="text-sm font-medium">
-            Powered by Advanced AI Technology
-          </AnimatedGradientText>
-          <ChevronRight
-            className="ml-1 size-4 stroke-neutral-500 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5"
-          />
+  const features = [
+    {
+      icon: Target,
+      title: "Personalized Recommendations",
+      description: "AI analyzes preferences, age, interests, and occasion to suggest perfect gifts"
+    },
+    {
+      icon: Clock,
+      title: "Instant Results",
+      description: "Get curated gift suggestions in seconds, not hours of browsing"
+    },
+    {
+      icon: Award,
+      title: "Premium Quality",
+      description: "Handpicked products from trusted brands and verified sellers"
+    },
+    {
+      icon: TrendingUp,
+      title: "Smart Learning",
+      description: "Our AI gets better with every interaction and learns from user feedback"
+    }
+  ]
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
+      {/* Modern Floating Navigation */}
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-white/80 backdrop-blur-lg rounded-full px-6 py-3 border border-white/20 shadow-lg">
+          <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                <Gift className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-gray-900">GiftGenius</span>
+            </div>
+            <div className="flex items-center space-x-6">
+              {navItems.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => handleNavClick(item.name)}
+                  className={cn(
+                    "flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200",
+                    activeSection === item.name.toLowerCase()
+                      ? "bg-purple-100 text-purple-700"
+                      : "text-gray-600 hover:text-purple-600 hover:bg-purple-50"
+                  )}
+                >
+                  <item.icon className="w-4 h-4" />
+                  <span className="text-sm font-medium">{item.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      </nav>
 
       {/* Chat Sidebar */}
       <ChatSidebar
@@ -191,176 +222,316 @@ export default function HomePage() {
         currentConversation={currentConversation}
       />
 
-      <main className="max-w-4xl mx-auto px-4 py-16 relative z-10">
-          {/* Centered Hero Section */}
-          <div className="text-center mb-16">
-            <div className="flex items-center justify-center space-x-3 mb-6">
-              <Sparkles className="h-10 w-10 text-blue-600" />
-              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-                AI-Powered Gift Recommendations
-              </h1>
-              <Sparkles className="h-10 w-10 text-blue-600" />
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 mb-8">
+              <Sparkles className="w-4 h-4 mr-2" />
+              <span className="text-sm font-medium">Powered by Advanced AI</span>
             </div>
-            <p className="text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Get{" "}
-              <Highlighter action="highlight" color="#87CEFA">
-                personalized gift suggestions
-              </Highlighter>{" "}
-              powered by{" "}
-              <Highlighter action="underline" color="#FF9800">
-                advanced AI
-              </Highlighter>
-              . Just describe who you're shopping for and let our AI find the{" "}
-              <Highlighter action="highlight" color="#98FB98">
-                perfect gifts
-              </Highlighter>
-              !
+            
+            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+              Find the Perfect
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                {" "}Gift{" "}
+              </span>
+              with AI
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
+              Transform gift-giving with intelligent recommendations. Our AI understands 
+              personalities, occasions, and preferences to suggest gifts that create lasting memories.
+            </p>
+
+            <div className="flex items-center justify-center mb-8">
+              <AvatarCircles avatarUrls={avatarUrls} />
+              <div className="ml-4 text-left">
+                <div className="flex items-center space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm text-gray-600">Loved by 50,000+ gift givers</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* AI Search Section */}
+      <section id="search" className="py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Describe & Discover
+            </h2>
+            <p className="text-lg text-gray-600">
+              Tell us about the person and occasion - our AI will do the rest
+            </p>
+          </motion.div>
+
+          <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
+            <AI_Prompt 
+              onSubmit={handleSubmit}
+              isLoading={isLoading}
+              placeholder="e.g., Anniversary gift for my wife who loves yoga and sustainable living"
+            />
+            
+            <div className="mt-6">
+              <p className="text-sm text-gray-500 mb-3">Try these examples:</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Birthday for tech-loving teenager",
+                  "Housewarming for minimalist couple", 
+                  "Thank you gift for helpful neighbor",
+                  "Graduation for future doctor"
+                ].map((example) => (
+                  <button
+                    key={example}
+                    onClick={() => handleSubmit(example)}
+                    className="px-4 py-2 bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-700 rounded-full text-sm transition-all duration-200"
+                  >
+                    {example}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Results Section */}
+      {recommendations && (
+        <section className="py-20 px-4 bg-gray-50">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100"
+            >
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">AI Recommendations</h3>
+              </div>
+              <div className="prose prose-lg max-w-none">
+                <div dangerouslySetInnerHTML={{ __html: recommendations }} />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
+
+      {/* Error Section */}
+      {errorType && (
+        <section className="py-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-red-50 border border-red-200 rounded-3xl p-8 text-center">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-red-900 mb-2">
+                Something went wrong
+              </h3>
+              <p className="text-red-700 mb-6">
+                {errorType === "UNKNOWN_ERROR" 
+                  ? "We encountered an unexpected error. Please try again."
+                  : "Unable to process your request. Please check your input and try again."
+                }
+              </p>
+              <Button 
+                onClick={() => setErrorType(null)}
+                className="bg-red-600 hover:bg-red-700 text-white"
+              >
+                Try Again
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Stats Section */}
+      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-blue-600">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center text-white"
+              >
+                <stat.icon className="w-8 h-8 mx-auto mb-3 opacity-80" />
+                <div className="text-3xl font-bold mb-1">{stat.value}</div>
+                <div className="text-sm opacity-80">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Why Choose GiftGenius?
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Experience the future of gift-giving with AI-powered personalization
             </p>
           </div>
 
-        {/* AI Prompt Input - Centered below title */}
-        <div className="flex justify-center mb-8" id="search">
-          <AI_Prompt 
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-            placeholder="e.g., Birthday present for my 10-year-old nephew who loves science and robots"
-          />
-        </div>
-
-        {/* Quick Suggestion Badges */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          <Badge 
-            variant="secondary" 
-            className="cursor-pointer hover:bg-blue-100 transition-colors"
-            onClick={() => handleSubmit("Birthday gift for my mom who loves gardening")}
-          >
-            Mom - Gardening
-          </Badge>
-          <Badge 
-            variant="secondary" 
-            className="cursor-pointer hover:bg-blue-100 transition-colors"
-            onClick={() => handleSubmit("Anniversary gift for my husband who loves cooking")}
-          >
-            Husband - Cooking
-          </Badge>
-          <Badge 
-            variant="secondary" 
-            className="cursor-pointer hover:bg-blue-100 transition-colors"
-            onClick={() => handleSubmit("Graduation gift for my friend who loves technology")}
-          >
-            Friend - Technology
-          </Badge>
-          <Badge 
-            variant="secondary" 
-            className="cursor-pointer hover:bg-blue-100 transition-colors"
-            onClick={() => handleSubmit("Christmas gift for my 5-year-old daughter who loves princesses")}
-          >
-            Daughter - Princesses
-          </Badge>
-        </div>
-
-        {/* Error Messages */}
-        {errorType === "MISSING_API_KEY" && (
-          <Card className="p-6 mb-12 bg-red-50 border-red-200">
-            <div className="flex items-start gap-4">
-              <MessageSquare className="h-6 w-6 text-red-600 mt-1" />
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-red-800 mb-2">API Key Setup Required</h3>
-                <p className="text-red-700 mb-4">
-                  Your OpenAI API key is not configured. Please add OPENAI_API_KEY to your environment variables.
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center p-6 rounded-2xl hover:shadow-lg transition-all duration-300 group"
+              >
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <feature.icon className="w-8 h-8 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {feature.description}
                 </p>
-              </div>
-            </div>
-          </Card>
-        )}
-
-          {errorType === "INVALID_API_KEY" && (
-            <Card className="p-6 mb-12 bg-red-50 border-red-200">
-              <div className="flex items-start gap-4">
-              <MessageSquare className="h-6 w-6 text-red-600 mt-1" />
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-red-800 mb-2">API Key Setup Required</h3>
-                  <p className="text-red-700 mb-4">
-                    Your OpenAI API key is invalid or has been revoked. Here's how to fix it:
-                  </p>
-                  <ol className="list-decimal list-inside space-y-2 text-sm text-red-700 mb-4">
-                    <li>
-                      Go to{" "}
-                      <a
-                        href="https://platform.openai.com/api-keys"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline"
-                      >
-                        OpenAI Platform
-                      </a>
-                    </li>
-                    <li>Create a new API key</li>
-                    <li>Copy the key (starts with sk-)</li>
-                    <li>Add it to your environment variables as OPENAI_API_KEY</li>
-                  </ol>
-                  <Button
-                    onClick={() => window.open("https://platform.openai.com/api-keys", "_blank")}
-                    className="bg-red-600 hover:bg-red-700 text-white"
-                  >
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                    Get New API Key
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
-
-        {/* Recommendations */}
-        {recommendations && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Gift className="h-5 w-5 text-green-600" />
-                <span>AI Recommendations</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose max-w-none">
-                <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                  {recommendations}
+              </motion.div>
+            ))}
           </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        </div>
+      </section>
 
-        {/* Ecommerce Brands Marquee */}
-        <div className="mt-16">
-          <Marquee pauseOnHover speed={25} className="py-4">
-            <div className="flex items-center space-x-16 mx-8">
-              {ecommerceBrands.map((brandName: string, index: number) => (
-                <div key={index} className="flex items-center justify-center min-w-[120px]">
-                  <span className="text-2xl font-serif font-bold text-gray-800 hover:text-blue-600 transition-colors duration-300 cursor-pointer">
-                    {brandName}
-                  </span>
-                </div>
-              ))}
-            </div>
+      {/* Brands Marquee */}
+      <section className="py-20 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Trusted by Leading Brands
+            </h2>
+            <p className="text-lg text-gray-600">
+              Discover gifts from premium retailers and trusted sellers
+            </p>
+          </div>
+          <Marquee className="[--duration:40s]">
+            {ecommerceBrands.map((brand, index) => (
+              <div key={index} className="mx-8 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-200">
+                <brand.component className="h-12 w-auto" />
+              </div>
+            ))}
           </Marquee>
         </div>
+      </section>
 
-        {/* User Avatars Section */}
-        <div className="mt-12 flex flex-col items-center space-y-4">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              Trusted by thousands of gift seekers
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Join our community of happy customers who found perfect gifts
+      {/* CTA Section */}
+      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-blue-600">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Ready to Find the Perfect Gift?
+            </h2>
+            <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of satisfied customers who've discovered amazing gifts with our AI
             </p>
-          </div>
-          <AvatarCircles numPeople={2847} avatarUrls={avatarUrls} />
+            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Button 
+                size="lg"
+                className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
+                onClick={() => {
+                  document.getElementById('search')?.scrollIntoView({ behavior: 'smooth' })
+                }}
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Start Searching
+              </Button>
+              <Button 
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-purple-600 px-8 py-4 text-lg font-semibold"
+                onClick={() => setIsChatSidebarOpen(true)}
+              >
+                <History className="w-5 h-5 mr-2" />
+                View History
+              </Button>
+            </div>
+          </motion.div>
         </div>
-      </main>
-      
-      {/* Stacked Circular Footer */}
-      <StackedCircularFooter />
+      </section>
+
+      {/* Footer */}
+      <footer className="py-16 px-4 bg-gray-900">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div className="col-span-2">
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                  <Gift className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-white">GiftGenius</span>
+              </div>
+              <p className="text-gray-400 max-w-md mb-4">
+                Revolutionizing gift-giving with AI-powered recommendations. 
+                Find meaningful gifts that create lasting memories.
+              </p>
+              <div className="flex space-x-4">
+                <AvatarCircles avatarUrls={avatarUrls.slice(0, 3)} />
+                <div className="text-sm text-gray-400">
+                  Trusted by 50K+ users
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">Product</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">AI Search</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Gift Categories</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Wishlist</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">API Access</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">Company</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Press</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between">
+            <p className="text-gray-400 text-sm">
+              © 2025 GiftGenius AI. All rights reserved.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
+              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy</a>
+              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Terms</a>
+              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">Support</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

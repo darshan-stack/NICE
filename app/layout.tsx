@@ -26,8 +26,8 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "GiftGenius AI - Find Perfect Gifts with AI",
   description:
-    "Discover the perfect gift for any occasion with our AI-powered recommendation engine. Get personalized gift suggestions from over 100,000 curated products in seconds.",
-  keywords: "gifts, AI, recommendations, shopping, presents, gift ideas, personalized gifts",
+    "Transform gift-giving with intelligent AI recommendations. Get personalized gift suggestions that create lasting memories in seconds.",
+  keywords: "AI gifts, gift recommendations, personalized gifts, AI shopping, gift ideas, smart gifts",
   authors: [{ name: "GiftGenius AI Team" }],
   creator: "GiftGenius AI",
   publisher: "GiftGenius AI",
@@ -37,16 +37,16 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://giftgenius-ai.com",
     title: "GiftGenius AI - Find Perfect Gifts with AI",
-    description: "AI-powered gift recommendations for any occasion",
+    description: "Transform gift-giving with intelligent AI recommendations",
     siteName: "GiftGenius AI",
   },
   twitter: {
     card: "summary_large_image",
     title: "GiftGenius AI - Find Perfect Gifts with AI",
-    description: "AI-powered gift recommendations for any occasion",
+    description: "Transform gift-giving with intelligent AI recommendations",
     creator: "@giftgeniusai",
   },
-    generator: 'v0.dev'
+  generator: 'Next.js'
 }
 
 export default function RootLayout({
