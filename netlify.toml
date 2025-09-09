@@ -1,0 +1,23 @@
+[build]
+  command = "pnpm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--version"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/*"
+  to = "/_next/static/:splat"
+  status = 200
+  force = false
+  condition = {Path = {match = "^/_next/static/.*"}}
+
+# Redirect all other requests to the Next.js app
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
